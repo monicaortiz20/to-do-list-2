@@ -1,47 +1,36 @@
 import React, { Component } from "react";
-// import { v4 as uuidv4 } from 'uuid';
+import WeatherCard from './WeatherCard'
+import { v4 as uuidv4 } from 'uuid';
 
 
 
 class Weather extends Component {
   constructor(props) {
     super(props);
-    this.state = { pronostico: this.props.defaultList }
+    this.state = {weatherlist: this.props.defaultList}
+
+    
   }
 
-  async componentDidMount(city){
+  async componentDidMount(){
+    this.getWeather();
     
-    const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=Madrid&appid=24bea49290aa5895b56cca71d6f3e584`);
+  }
+
+  getWeather = async(city='Madrid') => {
+    const response = await fetch('https://api.openweathermap.org/data/2.5/forecast?&q='+city+'&appid=24bea49290aa5895b56cca71d6f3e584');
     const data = await response.json();
-    console.log('esto es data', data)
+    console.log('esto es data.list', data.list)
 
     this.setState({
-      data
+      weatherlist:data.list
     })
-    console.log('componentDidMount');
   }
 
-  componentDidUpdate(prevProps, prevState){   //componente para cuando termine derenderizar datos del fetch, que salga como hecho. Notificar actualización
-    console.log('prevProps: ', prevProps, 'prevState: ', prevState)
-    console.log('componentDidUpdate');
-  }
+paintCards(){
+  return this.state.weatherlist.map((card,i)=><WeatherCard weatherlist={card} key={uuidv4()} />)
+ }
 
-  componentWillUnmount(){
-    console.log('componentWillUnmount');
-}
-
-
-
-
-
-
-  addCard = (event) => {
-    event.preventDefault();
-    const city = event.target.city.value;
-
-    const newCard = {city};
-    this.setState({pronostico:[...this.state.pronostico, newCard]})
-  }
 
   render() {
     return (
@@ -50,8 +39,11 @@ class Weather extends Component {
         <form onSubmit={this.addCard}>
           <label htmlFor="city">Ciudad:</label>
           <input type="text" id="city" name="city" />
-          <button type="submit" value="Buscar">Buscar</button>
+          <button onClick={this.getWeather} type="submit" value="Buscar">Buscar</button>
         </form>
+
+        {this.paintCards()}
+
       </section>
 
     );
