@@ -4,6 +4,7 @@ import Main from './components/Main/Main';
 import Footer from './components/Footer/Footer';
 import {BrowserRouter} from 'react-router-dom';
 
+import '../src/styles/styles.scss';
 
 function App() {
   return (
